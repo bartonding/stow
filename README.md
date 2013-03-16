@@ -1,4 +1,4 @@
 stow
 ====
 
-code snippet
+web developer code snippet
