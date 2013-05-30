@@ -1,3 +1,38 @@
+// ua-scan.js
+// ==========
+// author: barton.ding@gmail.com
+// time  : 2013-05-30
+// src   : https://github.com/bartonding/stow/blob/master/ua-scan.js
+// -----------------------------------------------------------------------------
+// - 对 user-agent 字符串进行扫描，提取目标信息
+// -
+// - "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko)
+// -  Chrome/26.0.1410.64 Safari/537.31"
+// -
+// - 转化为如下 JSON 对象 ->
+// -
+// -    *     {
+// -    *         'browser'  : ['Chrome', '26.0.1410.64'],
+// -    *         'engine'   : ['WebKit', '537.31']
+// -    *         'os'       : ['Windows NT', '6.1'],
+// -    *         'isMobile' : false
+// -    *     }
+// -----------------------------------------------------------------------------
+// - API's
+// >>>>> attributes <<<<<
+// -    UA.rules.browser
+// -    UA.rules.engine
+// -    UA.rules.os
+// -    UA.rules.mobile
+// >>>>>   methods  <<<<<
+// -    UA.scan
+// -    UA.addBrowserFilter
+// -    UA.addEngineFilter
+// -    [Deprecated]UA.scanBrowser
+// -    [Deprecated]UA.scanEngine
+// -    [Deprecated]UA.scanOS
+// -    [Deprecated]UA.scanIsMobile
+
 (function () {
     var root = this;
 
