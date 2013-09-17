@@ -42,7 +42,7 @@ CF.earthDistance = function (lat1, lng1, lat2, lng2) {
  * @param  {Number} ph Parent Height 容器高度
  * @param  {Number} cw Child Width 子元素宽度
  * @param  {Number} ch Child Height 子元素高度
- * @return {Object}    返回可是子元素居中的{width，height，top，left}
+ * @return {Object}    返回可使子元素居中的{width，height，top，left}
  */
 CE.center = function (pw, ph, cw, ch) {
 
