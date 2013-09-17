@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>html string tag check</title>
+<style type="text/css">
+html,body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+textarea{
+    margin: 0;
+    border: 0;
+    width: 100%;
+    height: 90%;
+    background-color: rgba(0,0,0,.8);
+    color: #FFF;
+}
+div#result{
+}
+li{
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #E6F2FA;
+}
+li:nth-child(2n){
+    background-color: #FFFED0;
+}
+button{
+    width: 49%;
+    height: 40px;
+}
+table{
+    width: 100%;
+    height: 100%;
+}
+td{
+    height: 90%;
+    vertical-align: top;
+}
+</style>
+</head>
+<body>
+
+<div><button>检查标签是否闭合</button></div>
+
+<table><tr>
+<td style="width:49%;"><textarea></textarea></td>
+<td></td>
+<td style="width:49%;"><div id="result"></div></td></tr></table>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="htmlstring-tag-closing-check.js"></script>
+<script type="text/javascript">
+jQuery(function ($) {
+// -----------------------------------------------------------------------------
+function heredoc(fn) {
+    return fn.toString()
+        .replace(/^[^\/]+\/\*!?/, '')
+        .replace(/\*\/[^\/]+$/, '');
+}
+var testString = heredoc(function(){/*
+    <div id="mod-2013-05-27" class="info-mod">
+        <img src="http://youdao.com" >
+        <h4 class="date newItem info-animated">
+            <span class="dict-icon"></span>
+            <span class="cur-date">2013-05-27</span>
+        </h4>
+
+    </div>
+*/});
+var t = 1;
+var htmlstring = '';
+while (t--) {
+    htmlstring += testString;
+}
+// htmlstring = ' htmlstring.length = ' + htmlstring.length + '\n' + htmlstring;
+$('textarea').val(htmlstring);
+// -----------------------------------------------------------------------------
+$('button').click(function () {
+    console.log('------------------------------------------------------------');
+    var v = $('textarea').val();
+    var checkResult = checkHtmlStringTag(v) || [];
+    var _starttime = +new Date;
+    printResult(checkResult);
+    var _endtime = +new Date;
+    // console.log('time: ', _endtime - _starttime);
+});
+// -----------------------------------------------------------------------------
+function printResult (r) {
+    var output = ['<ol>'];
+    if (!r.length) {
+        output.push('<li>all right !</li>');
+    }
+    $.each(r, function (idx, o) {
+        output[output.length] = [
+            '<li>',
+                'line ' + o.line + ', column ' + o.column,
+                ', missed the ',
+                o.isEnd ? 'start' : 'end',
+                ' tag "' + o.tagName + '"',
+            '</li>'
+        ].join('');
+    });
+    output.push('</ol>');
+    $('#result').html(output.join(''));
+}
+// -----------------------------------------------------------------------------
+});
+</script>
+</body>
+</html>
