@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross browser Object.defineProperty test</title>
+<style>
+* {
+  margin: 0;
+}
+a {
+  color: blue;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+body {
+  font-family: 'Trebuchet MS';
+  font-size: 1.2em;
+  line-height: 1.5;
+  margin: 1em;
+}
+pre {
+  border: 1px solid black;
+  font-family: 'Courier New';
+  padding: 0.1em;
+}
+#getter_and_setter_test pre {
+  display: inline;
+}
+div.hint {
+  background-color: blue;
+  color: white;
+  font-family: 'Courier New';
+  padding: 0.3em;
+  position: absolute;
+}
+</style>
+<script>
+// IE6+ Firefox2+ Chrome1+ Opera9.50+ Safari3.1+
+"use strict"
+if (!Object.defineProperty) {
+  Object.defineProperty = function(object, property, getterAndSetter) {
+    if (Object.prototype.__defineGetter__) {
+      object.__defineGetter__(property, getterAndSetter.get);
+      object.__defineSetter__(property, getterAndSetter.set);
+      return;
+    }
+
+    // IE6/7/8的DOM对象
+    if (typeof object.toString !== 'object') {
+        return;
+    }
+
+    // if (typeof object.id === 'undefined') {
+    //   return;
+    // }
+    // window._.max([1,2,3]);
+
+    object[property] = getterAndSetter.get;
+    object[property].toString = function() {
+      return getterAndSetter.get.apply(object);
+    }
+    object[property].valueOf = function() {
+      return getterAndSetter.get.apply(object);
+    }
+    var onPropertyChange = function(e) {
+      if (event.propertyName == property) {
+        // object.detachEvent('onpropertychange', onPropertyChange);
+        // var newValue = getterAndSetter.set.call(object, object[property]);
+        getterAndSetter.set.call(object, object[property]);
+        // object[property] = getterAndSetter.get;
+        // object[property].toString = function() {
+        //   return getterAndSetter.get.apply(object);
+        // }
+        // object[property].valueOf = function() {
+        //   return getterAndSetter.get.apply(object);
+        // }
+        // object.attachEvent('onpropertychange', onPropertyChange);
+      }
+    }
+    object.attachEvent('onpropertychange', onPropertyChange);
+  }
+}
+
+function AccessibleObject() {
+  if (typeof Object.keys === 'function' || Object.prototype.__defineGetter__) {
+    if (arguments.length > 0 && typeof arguments[0] !== 'object') {
+      return new Object;
+    }
+    return Object.call(this, arguments[0]);
+  }
+  var o = document.createElement('fake');
+  document.documentElement.appendChild(o);
+  if (arguments.length > 0 && typeof arguments[0] === 'object') {
+    for (var i in arguments[0]) {
+      if (arguments[0].hasOwnProperty(i)) {
+        o[i] = arguments[0][i];
+      }
+    }
+  }
+  o.remove = function() {
+    document.documentElement.removeChild(this);
+  }
+  return o;
+}
+</script>
+<script>
+if (!!document.getBoxObjectFor || window.mozInnerScreenX != null) {
+  HTMLElement.prototype.__defineSetter__("innerText", function(sText) {
+    var parsedText = document.createTextNode(sText);
+    this.innerHTML = "";
+    this.appendChild(parsedText);
+    return parsedText;
+  });
+  HTMLElement.prototype.__defineGetter__("innerText", function() {
+    var r = this.ownerDocument.createRange();
+    r.selectNodeContents(this);
+    return r.toString();
+  });
+}
+
+function display(object, show) {
+  if (!show) {
+    if (document.getElementById(object.innerText + '_hint')) {
+      document.body.removeChild(document.getElementById(object.innerText + '_hint'));
+    }
+    return;
+  }
+  var position = object.getBoundingClientRect();
+  var content = '';
+  switch (object.innerText) {
+    case 'AccessibleObject':
+      {
+        if (typeof object.toString === 'object') {
+          // IE9-
+          content = 'DOM object';
+        } else {
+          content = typeof object;
+        }
+      }
+      break;
+    case 'defineProperty':
+      {
+        if (typeof Object.defineProperty === 'function') {
+          content += 'Object.defineProperty = ' + Object.defineProperty.toString();
+        } else {
+          content += 'Object.defineProperty undefined';
+        }
+        content += '<br /><br />';
+        if (typeof Object.prototype.__defineGetter__ === 'function') {
+          content += 'Object.prototype.__defineGetter__ = ' + Object.prototype.__defineGetter__.toString();
+        } else {
+          content += 'Object.prototype.__defineGetter__ undefined';
+        }
+        content += '<br /><br />';
+        if (typeof Object.prototype.__defineSetter__ === 'function') {
+          content += 'Object.prototype.__defineSetter__ = ' + Object.prototype.__defineSetter__.toString();
+        } else {
+          content += 'Object.prototype.__defineSetter__ undefined';
+        }
+      }
+      break;
+  }
+  if (!document.getElementById(object.innerText + '_hint')) {
+    var block = document.createElement('div');
+    block.style.cssText = 'left:' + position.left + 'px; top:' + (position.bottom + 5) + 'px;';
+    block.id = object.innerText + '_hint';
+    block.className = 'hint';
+    block.innerHTML = content;
+    document.body.appendChild(block);
+  }
+}
+</script>
+<h1>Cross browser Object.defineProperty test</h1>
+<pre id="testcase_definition">
+var o = new <a onmouseover="display(this, true);" onmouseout="display(this, false);">AccessibleObject</a>({ firstName: 'San', lastName: 'Zhang' });
+Object.<a onmouseover="display(this, true);" onmouseout="display(this, false);">defineProperty</a>(o, 'fullName', {
+  get: function() {
+    // alert(11);
+    // http....
+    return this.firstName + ' ' + this.lastName;
+  },
+  set: function(value) {
+    var names = value.split(/\s/);
+    this.firstName = names[0];
+    this.lastName = names[1];
+  }
+});
+</pre>
+<script>
+var testcase_definition = document.getElementById('testcase_definition');
+window.eval(testcase_definition.innerText);
+</script>
+<div id="getter_and_setter_test">
+<script>
+document.write('<br />get: o.firstName = ' + o.firstName);
+document.write('<br />get: o.lastName = ' + o.lastName);
+document.write('<br />set: <pre>o.firstName = \'Yuan\';</pre>');
+o.firstName = 'Yuan';
+document.write('<br />set: <pre>o.lastName = \'Lu\';</pre>');
+o.lastName = 'Lu';
+document.write('<br />get: o.fullName = ' + o.fullName);
+document.write('<br />set: <pre>o.fullName = \'Jin Lu\';</pre>')
+o.fullName = 'Jin Lu';
+document.write('<br />get: o.firstName = ' + o.firstName);
+document.write('<br />get: o.lastName = ' + o.lastName);
+document.write('<br />get: o.fullName = ' + o.fullName);
+</script>
+</div>
+</head>
+<body>
+</body>
+</html>
