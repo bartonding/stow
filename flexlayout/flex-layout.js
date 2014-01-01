@@ -91,6 +91,7 @@
         this.isSubLayout = false; // 默认为非嵌套layout
         this.conf = _.extend({}, DEFAULT_LAYOUT_CONFIG, conf || {});
         this.regions = {};
+        this.regionIndex = [];
         this.init();
     };
 
@@ -115,6 +116,7 @@
 
             var self = this;
             var regions = this.regions;
+            var regionIndex = this.regionIndex;
 
             var trRow = generateTR();
             var table = generateTABLE();
@@ -123,6 +125,8 @@
             _.each(this._parseScheme(), function (rconf, idx) {
                 var region = new Region(rconf, self);
                 regions[rconf.name] = region;
+                regionIndex.push(rconf.name);
+
                 if (self.isRow) {
                     trRow.append(region.render());
                 } else {
@@ -146,6 +150,32 @@
         getRegion: function (regionName) {
             return this.regions[regionName];
         },
+        // 动态添加 region 到指定位置
+        addRegion: function (regionConf, position) {
+            if (regionConf instanceof Region) return null;
+            var tmpRegion, ri = this.regionIndex, len = ri.length;
+            var p = position === undefined ? -1 : position;
+            if (_.isString(p)) {
+                tmpRegion = this.getRegion(p);
+                p = _.indexOf(ri, p) + 1;
+            } else if (_.isNumber(p)) {
+                p = p === 0 ? 1 : p > 0 ? p : (p + len) < 0 ? len : p + len + 1;
+                tmpRegion = this.getRegion(ri[p-1]);
+            }
+
+            if (!tmpRegion) return null;
+
+            var conf = this._mendRegionConfig(regionConf);
+            var region = new Region(conf, this);
+            this.regions[region.name] = region;
+            ri.splice(p, 0, region.name)；
+
+            if (this.isRow) {
+
+            }
+
+            return region;
+        },
         addModules: function (mods, regionName) {
             var self = this;
             _.each(mods, function(mod, idx) {
@@ -163,27 +193,32 @@
             // node.prepend(this.wrap);
             node.prepend(this.wrap);
         },
+        _mendRegionConfig: function (region) {
+            if (_.isObject(region)) return region;
+            if (_.isString(region)) return {'name': region};
+            return null;
+        },
         _parseScheme: function () {
-            var result = [], hasMaxType = false;
+            var result = [], self = this, hasMaxType = false;
             _.each(this.conf.scheme, function (region, idx) {
-                // 1、region 中嵌入 layout 实例, 忽略之
-                if (region instanceof Layout) return;
 
-                // 2、指定了 region 的配置参数
-                if (_.isObject(region)) {
-                    result.push(region);
-                    if (!hasMaxType && region.type === 'max') {
-                        hasMaxType = true;
-                        return;
-                    }
-                    // 避免出现多个 region.conf.type='max' 的情况
-                    if (hasMaxType && region.type === 'max') {
-                        region.type = 'min';
-                    }
+                region = self._mendRegionConfig(region);
+
+                // region 中嵌入 layout 实例或为 null 时, 忽略之
+                if (region === null || region instanceof Layout) return;
+
+
+                // 指定了 region 的配置参数
+                result.push(region);
+
+                if (!hasMaxType && region.type === 'max') {
+                    hasMaxType = true;
+                    return;
                 }
-                // 3、仅指定了 region 名称
-                else if (_.isString(region)) {
-                    result.push({'name': region});
+
+                // 避免出现多个 region.conf.type='max' 的情况
+                if (hasMaxType && region.type === 'max') {
+                    region.type = 'min';
                 }
             });
 
