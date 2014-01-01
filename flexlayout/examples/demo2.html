@@ -5,20 +5,36 @@
 <title>programmable layout demo2</title>
 <style type="text/css">
 html,body{
-
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+#demo{
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    background-image: url(lincj.jpg);
+    background-position: 50% 50%;
+}
+#cz{
+    position: absolute;
+    z-index: 9;
+    width: 70px;
+    height: 70px;
+    background: url(../cz.png) 50% 50%;
 }
 </style>
 </head>
 <body>
 
+<div id="cz"></div>
+<div id="demo">lincj</div>
 
 
-<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-<script src="../flex-layout.js"></script>
-<script type="text/javascript">
-var pl = ProLayout.create({});
-pl.getSlot('slot-1').addModules([]);
-pl.addModules([], 'slot-1');
-</script>
+
+<script src="/jslibs/jquery-1.8.js"></script>
+<script src="/jslibs/underscore.js"></script>
+<script src="lincj.js"></script>
 </body>
 </html>

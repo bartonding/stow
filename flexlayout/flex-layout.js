@@ -160,8 +160,8 @@
         layout: function (node) {
             var node = $(node);
             if (node.length === 0) node = $(document.body);
+            node.append(this.wrap);
             // node.prepend(this.wrap);
-            node.prepend(this.wrap);
         },
         _parseScheme: function () {
             var result = [], hasMaxType = false;
@@ -296,10 +296,18 @@
     var CNP = 'youdao-flexlayout-';
 
     function generateDIV(className) {
-        return $('<div class="' + CNP + className + '">');
+        return $([
+            '<div class="' + CNP + className + '" ',
+                'style="position:relative;" ',
+            '>'
+        ].join(''));
     }
     function generateTD() {
-        return $('<td class="' + CNP + 'td" style="vertical-align:top;height:100%;">');
+        return $([
+            '<td class="' + CNP + 'td" ',
+                'style="vertical-align:top;height:100%;"',
+            '>'
+        ].join(''));
     }
     function generateTR() {
         return $('<tr class="' + CNP + 'tr">');
