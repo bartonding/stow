@@ -1,85 +1,54 @@
 (function (root) {
 
-    function heredoc(fn) {
-        return fn.toString()
-            .replace(/^[^\/]+\/\*!?/, '')
-            .replace(/\*\/[^\/]+$/, '')
-            .replace(/^\s+/, '')
-            .replace(/\s+$/, '');
-    }
-    var testString = heredoc(function(){/*
-        <div class="mod" style="background-color:{{color}};width:100%;height:100%;">{{content}}</div>
-    */});
-    var generateString = function (content, color) {
-        return testString.replace('{{content}}', content).
-            replace('{{color}}', color);
-    };
+var mid = 0;
+var creattModID = function () {
+    mid += 1;
+    return 'test_mod_id_' + mid;
+};
 
+var random = function (min, max) {
+    return (Math.random() * (max - min) + min) | 0;
+}
+var randomColor = function () {
+    var n1 = random(100, 255).toString(16);
+    if (n1.length === 1) n1 = '0' + n1;
 
-    // -------------------------------------------------------------------------
-    // -- test module
-    // -------------------------------------------------------------------------
-    root.testModule1 = (function () {
-        var mod = function () {};
+    var n2 = random(100, 255).toString(16);
+    if (n2.length === 1) n2 = '0' + n2;
 
+    var n3 = random(10, 255).toString(16);
+    if (n3.length === 1) n3 = '0' + n3;
+
+    return '#'+n1+n2+n3;
+};
+
+root.testmod = function (content) {
+    return (function (mod) {
+        var id = creattModID();
         mod.render = function () {
-            // return generateString('test module 1', 'red');
-            return generateString('<div style="height:100px;">111</div>', 'red');
+            return [
+                '<div id="'+id+'" style="width:100%;height:100%;',
+                    'background-color:'+randomColor()+';',
+                    'text-align:center;line-height:50px;',
+                '" class="mod">',
+                    '<a href="javascript:void(0);">', content, '<i></i></a>',
+                '</div>'
+            ].join('');
         };
-        mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod1 ......');
-            ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
-        };
-
-        return mod;
-    })();
-
-    root.testModule2 = (function () {
-        var mod = function () {};
-
-        mod.render = function () {
-            return generateString('test module 22', 'yellow');
-        };
-        mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod2 ......');
-            // console.log('mod2 ', arguments);
-            // console.log(mod.region);
-            ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
-        };
-
-        var xx = 0;
-        mod.xxrun = function () {
-            xx++;
-            // console.log('xxrun: ', xx++);
-            if (!mod.region) return;
+        mod.initialize = function () {
             var region = mod.region;
-            var m = region.layout.regions['a1'].context.find('div.mod');
-            // console.log(m);
-            // m.height((xx%2===1)?30:100);
-            m.width((xx%2===1)?30:100);
-            region.updateLayoutSize && region.updateLayoutSize();
-        };
-
-        return mod;
-    })();
-    // window.setInterval(testModule2.xxrun, 1000);
-    // window.setTimeout(testModule2.xxrun, 1000);
-
-    root.testModule3 = (function () {
-        var mod = function () {};
-
-        var node = null;
-
-        mod.render = function () {
-            return generateString('test module 333', 'green');
+            region.context.find('div.mod').on('click', function (evt) {
+                var self = $(this);
+                console && console.log && console.log(
+                    region.name);
+            });
         };
         mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod3 ......');
-            // console.log('mod3 ',arguments);
-            ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
+            $('#'+id).closest('td').attr('class', 'max');
+            $('#'+id).find('a').html(rs.width);
         };
-
         return mod;
-    })();
+    })(function(){});
+};
 
 })(this);

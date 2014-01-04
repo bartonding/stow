@@ -27,7 +27,7 @@
             return generateString('<div style="height:100px;">111</div>', 'red');
         };
         mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod1 ......');
+            // console.log('mod1 ......');
             ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
         };
 
@@ -41,10 +41,10 @@
             return generateString('test module 22', 'yellow');
         };
         mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod2 ......');
+            // console.log('mod2 ......');
             // console.log('mod2 ', arguments);
             // console.log(mod.region);
-            ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
+            // ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
         };
 
         var xx = 0;
@@ -74,7 +74,7 @@
             return generateString('test module 333', 'green');
         };
         mod._layoutResize = function (rs, ws, ctx) {
-            console.log('mod3 ......');
+            // console.log('mod3 ......');
             // console.log('mod3 ',arguments);
             ctx.find('div.mod').html([JSON.stringify(rs), JSON.stringify(ws)].join('<br/>'));
         };

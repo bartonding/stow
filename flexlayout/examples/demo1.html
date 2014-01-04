@@ -8,9 +8,6 @@ html,body{
     margin: 0;
     height: 100%;
 }
-td{
-    /*border: 1px solid red;*/
-}
 .test{
     position: absolute;
     width: 99px;
@@ -22,6 +19,7 @@ td{
 </style>
 </head>
 <body>
+
 
 
 <script src="/jslibs/jquery-1.8.js"></script>
@@ -48,13 +46,15 @@ pl1.addModule(testModule3, 'c1');
 
 // -----------------------------------------------------------------------------
 var config = {
-    type: 'row',
+    // type: 'row',
+    type: 'column',
     width: '100%',
+    // height: '100%',
     height: '100%',
     scheme: [
-        {name: 'a', size: 200},
+        {name: 'a', size: 0},
         {name: 'b', type: 'max'},
-        {name: 'c', size: 300}
+        {name: 'c', size: 0}
     ]
 };
 var pl = FlexLayout.create(config);
@@ -66,6 +66,10 @@ pl.getRegion('b').addModule(testModule2);
 // pl.getRegion('b').addModules([testModule2, testModule2]);
 pl.addModules([testModule3], 'c');
 pl.layout();
+
+var rr = pl.addRegion({name: 'd'}, -1);
+rr.addModule(testModule1);
+
 
 
 
