@@ -25,7 +25,7 @@ var randomColor = function () {
 root.testmod = function (content) {
     return (function (mod) {
         var id = creattModID();
-        mod.render = function () {
+        mod.render = function (data) {
             return [
                 '<div id="'+id+'" style="width:100%;height:100%;',
                     'background-color:'+randomColor()+';',
@@ -35,7 +35,7 @@ root.testmod = function (content) {
                 '</div>'
             ].join('');
         };
-        mod.initialize = function () {
+        mod.initialize = function (container) {
             var region = mod.region;
             region.context.find('div.mod').on('click', function (evt) {
                 var self = $(this);

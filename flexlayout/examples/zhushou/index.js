@@ -6,7 +6,7 @@ var flMain = FlexLayout.create({
         {name: 'a', type: 'max'},
         {name: 'b', size: 20}
     ],
-    style: 'position:fixed;bottom:10%;left:0;'
+    style: 'position:fixed;bottom:30%;left:0;'
 });
 
 var flsub = FlexLayout.create({
@@ -43,7 +43,6 @@ flMain.getRegion('b').wrap.click(function () {
     flMain.toggle('a');
 });
 
-var tmpid = 0;
 var regionCache = [
     {status: true, obj: flsub.getRegion('s2')},
     {status: true, obj: flsub.getRegion('s3')},
@@ -72,11 +71,11 @@ var hideRegionInCache = function () {
     rg.status = false;
     flsub.hide(regionCache[i].obj);
 };
+
+var tmpid = 0;
 flsub.getRegion('s4').on('resize', function (rs, ws, region) {
-    // console.log(arguments);
-    var w = rs.width, tmp;
-    // console.log(region.name, ' : ', w);
-    if (w > 150) {
+    var width = rs.width, tmp;
+    if (width > 150) {
         if (hasHide()) {
             showRegionInCache();
         } else {
@@ -84,7 +83,7 @@ flsub.getRegion('s4').on('resize', function (rs, ws, region) {
             tmp.addModule(testmod(tmpid++));
             regionCache.push({status:true, obj: tmp});
         }
-    } else if (w < 50) {
+    } else if (width < 50) {
         hideRegionInCache();
     }
 });

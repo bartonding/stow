@@ -14,7 +14,7 @@
     };
 
     // -------------------------------------------------------------------------
-    // -- 生产全局 ID
+    // -- 全局 ID
     var _layout_id = 0;
     function generateLayoutId () {
         return 'youdao_flexlayout_' + (_layout_id++);
