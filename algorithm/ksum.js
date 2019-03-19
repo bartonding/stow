@@ -1,16 +1,4 @@
 
-    // let len = 0;
-    // let rrr = fourSum([1,2,3,4,5,6,7,8,9], 7);
-    // console.log(rrr)
-
-    // function fourSum(nums, target) {
-    //     len = nums.length;
-    //     nums.sort(); // 先排序
-    //     return kSum(nums, target, 4, 0); // 递归调用
-    // }
-
-// console.log(JSON.stringify(kSum([1,2,3,4,5,6,7,8,9], 7, 2, 0), null, 2))
-// console.log(kSum([1,2,3, 3,4,5,6], 10, 3, 0))
 let testarr = [1,2,4,2,2,3,4,5,6,7,8,9]
 // console.log(kSum([1,2,2,2,3,4,5,6,7,8,9], 10, 3, 0))
 console.log(kSum([...new Set(testarr)].sort(), 10,3,0))
